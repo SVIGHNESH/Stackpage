@@ -111,6 +111,8 @@ Status as of the last hardware run on a Galaxy Tab A7 Lite (SM-T225, Android 12,
 | Protect: output refuses to open without the password in two third-party viewers | Not run | M6 gate |
 | Protect: already-protected PDF reports it instead of crashing | Not run | |
 | Clean: a camera photo's copy has no GPS or timestamps | Not run | M7.1 gate; the mechanism is instrumented-tested |
+| Sign: signature lands at the placed position in the export | Not run | M6 gate; check in a third-party viewer |
+| Sign: a signed born-digital PDF keeps selectable text | Not run | The stamp is appended, not rasterised |
 | Process death behind the picker restores the route | Not run | See known issue 1a |
 | Save-all batch duration is tolerable | Not run | searchPlan re-probes per image; seed from the previous winner if slow |
 

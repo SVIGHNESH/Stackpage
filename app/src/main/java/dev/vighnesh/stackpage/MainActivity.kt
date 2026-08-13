@@ -13,6 +13,7 @@ import dev.vighnesh.stackpage.feature.compress.CompressRoute
 import dev.vighnesh.stackpage.feature.convert.ConvertRoute
 import dev.vighnesh.stackpage.feature.protect.ProtectRoute
 import dev.vighnesh.stackpage.feature.scan.ScanRoute
+import dev.vighnesh.stackpage.feature.sign.SignRoute
 import dev.vighnesh.stackpage.feature.stack.StackRoute
 import dev.vighnesh.stackpage.ui.home.HomeScreen
 import dev.vighnesh.stackpage.ui.theme.StackpageTheme
@@ -42,6 +43,7 @@ object Routes {
     const val SCAN = "scan"
     const val PROTECT = "protect"
     const val CLEAN = "clean"
+    const val SIGN = "sign"
 }
 
 @Composable
@@ -56,6 +58,7 @@ private fun StackpageNavHost() {
                 onOpenConvert = { navController.navigate(Routes.CONVERT) },
                 onOpenProtect = { navController.navigate(Routes.PROTECT) },
                 onOpenClean = { navController.navigate(Routes.CLEAN) },
+                onOpenSign = { navController.navigate(Routes.SIGN) },
             )
         }
         composable(Routes.STACK) {
@@ -66,6 +69,9 @@ private fun StackpageNavHost() {
         }
         composable(Routes.CONVERT) {
             ConvertRoute()
+        }
+        composable(Routes.SIGN) {
+            SignRoute()
         }
         composable(Routes.CLEAN) {
             CleanRoute()

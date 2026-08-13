@@ -35,6 +35,12 @@ dev.vighnesh.stackpage
 │   │   ├── CleanRoute.kt
 │   │   ├── CleanScreen.kt
 │   │   └── CleanViewModel.kt Decode at 4096px cap, fresh JPEG, SAF tree
+│   ├── sign/                Draw once, stamp onto any PDF page
+│   │   ├── SignRoute.kt
+│   │   ├── SignScreen.kt     Pad, page preview, drag-to-place, size slider
+│   │   ├── SignViewModel.kt  PdfRenderer preview; PDFBox appends the stamp
+│   │   ├── SignaturePad.kt   Stroke capture to a transparent PNG
+│   │   └── SignatureStore.kt One PNG in app-private files
 │   └── protect/             Password-protect any PDF
 │       ├── ProtectRoute.kt
 │       ├── ProtectScreen.kt  File card, password field, save

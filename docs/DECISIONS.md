@@ -198,7 +198,8 @@ The cost is roughly 9MB on the debug APK (21MB to 30MB); R8 shrinks release buil
 The export path does not move: `PdfDocument` still writes every stack export.
 PDFBox is only opened where the platform has nothing - encryption now, potentially lossless page operations and the signature stamp later.
 
-The signature half of the roadmap's 2.4 is deferred, not dropped: drawing a signature and drag-placing it on a page is a full editor surface, and it should land together with the crop editor rather than as a second bespoke gesture layer.
+The signature half landed once the crop editor existed: the pad captures strokes to a transparent PNG in app-private files, the page preview comes from PdfRenderer, and PDFBox appends one image draw to the chosen page's content stream, so a born-digital PDF keeps its text.
+Text watermarks can ride the same placement UI later.
 
 **Rejected:** iText (AGPL); shipping encryption through a rasterise-and-rebuild trick (destroys text).
 **Revisit if:** APK size becomes a complaint, in which case R8 rules for PDFBox get tightened first.

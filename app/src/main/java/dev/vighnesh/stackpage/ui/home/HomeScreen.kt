@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.Compress
 import androidx.compose.material.icons.rounded.DocumentScanner
+import androidx.compose.material.icons.rounded.Draw
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.PictureAsPdf
 import androidx.compose.material.icons.rounded.Shield
@@ -50,6 +51,7 @@ fun HomeScreen(
     onOpenConvert: () -> Unit,
     onOpenProtect: () -> Unit,
     onOpenClean: () -> Unit,
+    onOpenSign: () -> Unit,
 ) {
     // The footer is a bottom bar and the cards scroll: four cards at a large
     // font scale overflow a phone screen, and a pinned-footer Column with no
@@ -115,6 +117,13 @@ fun HomeScreen(
                 title = "Protect a PDF",
                 description = "Save a copy that opens only with a password you set.",
                 onClick = onOpenProtect,
+            )
+            Spacer(Modifier.height(12.dp))
+            ToolCard(
+                icon = Icons.Rounded.Draw,
+                title = "Sign a PDF",
+                description = "Draw your signature once, then drag it onto any page.",
+                onClick = onOpenSign,
             )
             Spacer(Modifier.height(12.dp))
             ToolCard(
