@@ -82,6 +82,7 @@ The reasoning lives in `docs/`, and `CLAUDE.md` is the entry point for anyone, h
 | [`docs/RUNBOOK.md`](docs/RUNBOOK.md) | Build, install, drive the app over adb, verify a PDF, cut a release, get unstuck |
 | [`docs/TESTING.md`](docs/TESTING.md) | Test coverage, the manual QA matrix, known issues, and the regression log |
 | [`docs/ROADMAP.md`](docs/ROADMAP.md) | What is next, what each item will break, and what is deliberately not planned |
+| [`docs/PLAN.md`](docs/PLAN.md) | The roadmap turned into ordered milestones with file-level changes and acceptance gates |
 
 Next up is an instrumented test for `ImageSource`.
 The one shipped export bug lived there, was invisible to every existing test, and broke every export.

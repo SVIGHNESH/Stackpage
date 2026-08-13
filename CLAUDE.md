@@ -33,6 +33,7 @@ Four documents carry the reasoning; this file only points at them.
 - `docs/DECISIONS.md` - the decision log. Read it before proposing an architectural change, because several "obvious" suggestions were considered and rejected here for a stated reason.
 - `docs/RUNBOOK.md` - build, install, drive the app on a real device over adb, cut a release, and the toolchain traps that will otherwise cost an hour.
 - `docs/TESTING.md` - what is covered by tests, what needs a device, the manual QA matrix, and the known issues.
+- `docs/PLAN.md` - the roadmap turned into ordered milestones; check which milestone is active before starting work.
 
 ## Load-bearing invariants
 
