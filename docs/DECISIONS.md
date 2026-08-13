@@ -172,3 +172,17 @@ If the scanner fails under the stripped manifest, the fallback stands: CameraX c
 
 **Rejected:** CameraX-first (owns a camera session and the permission for a job the platform already hosts); shipping the merged INTERNET permission (breaks the only claim).
 **Revisit if:** the deferred spike fails on hardware, or Play services delivery proves unreliable on de-Googled devices people actually use.
+
+---
+
+## 15. Existing PDFs edit inside the stack tool, not a separate feature
+
+The plan sketched `feature/pdfpages` as its own package.
+Built honestly, it would have been the stack tool with a different name: the same grid, the same reorder, the same export.
+Instead the stack tool gains "Open a PDF", imported pages render to cache JPEGs at 150dpi and join the pile as ordinary pages, and delete, reorder, extract, append, and merge all fall out of surfaces that already exist.
+
+The rasterisation cost is stated to the user every time a PDF is imported, unconditionally: this path re-saves pages as images, and pretending otherwise for born-digital PDFs would be a lie of omission.
+Rendered page files are the app's only cache and are deleted on Clear all and on process start.
+
+**Rejected:** a separate pdfpages feature (duplicate surface); lossless page operations (needs a real PDF library, which is M6's decision).
+**Revisit if:** M6 adds PDFBox, whose page-level copy would make lossless reorder and merge possible for born-digital PDFs.

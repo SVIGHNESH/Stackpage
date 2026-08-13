@@ -70,6 +70,7 @@ import dev.vighnesh.stackpage.pdf.PageSize
 fun StackScreen(
     state: UiState,
     onPickImages: () -> Unit,
+    onPickPdf: () -> Unit,
     onMove: (Int, Int) -> Unit,
     onRemove: (Uri) -> Unit,
     onRotate: (Uri) -> Unit,
@@ -79,6 +80,7 @@ fun StackScreen(
     onMargin: (Margin) -> Unit,
     onExport: () -> Unit,
     onCancelExport: () -> Unit,
+    onCancelImport: () -> Unit,
     onDismissResult: () -> Unit,
     onOpenResult: (Uri) -> Unit,
     onShareResult: (Uri) -> Unit,
@@ -115,7 +117,11 @@ fun StackScreen(
     ) { padding ->
         Box(Modifier.fillMaxSize()) {
             if (state.isEmpty) {
-                EmptyState(onPickImages = onPickImages, modifier = Modifier.padding(padding))
+                EmptyState(
+                    onPickImages = onPickImages,
+                    onPickPdf = onPickPdf,
+                    modifier = Modifier.padding(padding),
+                )
             } else {
                 PageGrid(
                     pages = state.pages,
@@ -131,12 +137,23 @@ fun StackScreen(
                         bottom = padding.calculateBottomPadding() + 96.dp,
                     ),
                 )
-                AddMoreButton(
-                    onClick = onPickImages,
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .padding(bottom = padding.calculateBottomPadding() + 16.dp),
-                )
+                ) {
+                    AddMoreButton(onClick = onPickImages)
+                    OutlinedButton(onClick = onPickPdf, modifier = Modifier.heightIn(min = 48.dp)) {
+                        Icon(Icons.Rounded.PictureAsPdf, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text("Add PDF", style = MaterialTheme.typography.labelLarge)
+                    }
+                }
+            }
+
+            state.importing?.let { (done, total) ->
+                ImportProgress(done = done, total = total, onCancel = onCancelImport)
             }
 
             when (val export = state.export) {
@@ -165,7 +182,11 @@ fun StackScreen(
 }
 
 @Composable
-private fun EmptyState(onPickImages: () -> Unit, modifier: Modifier = Modifier) {
+private fun EmptyState(
+    onPickImages: () -> Unit,
+    onPickPdf: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -201,6 +222,12 @@ private fun EmptyState(onPickImages: () -> Unit, modifier: Modifier = Modifier) 
             Icon(Icons.Rounded.AddPhotoAlternate, contentDescription = null, modifier = Modifier.size(20.dp))
             Spacer(Modifier.width(10.dp))
             Text("Choose images", style = MaterialTheme.typography.labelLarge)
+        }
+        Spacer(Modifier.height(12.dp))
+        OutlinedButton(onClick = onPickPdf, modifier = Modifier.heightIn(min = 48.dp)) {
+            Icon(Icons.Rounded.PictureAsPdf, contentDescription = null, modifier = Modifier.size(18.dp))
+            Spacer(Modifier.width(8.dp))
+            Text("Open a PDF", style = MaterialTheme.typography.labelLarge)
         }
         Spacer(Modifier.height(20.dp))
         // The one claim worth making on this screen, stated plainly rather than
@@ -355,6 +382,31 @@ private fun <T> ChipRow(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+        }
+    }
+}
+
+@Composable
+private fun ImportProgress(done: Int, total: Int, onCancel: () -> Unit) {
+    Scrim(onDismiss = onCancel) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(28.dp),
+        ) {
+            Text("Opening the PDF", style = MaterialTheme.typography.titleLarge)
+            Spacer(Modifier.height(6.dp))
+            Text(
+                if (total == 0) "Reading pages…" else "Page $done of $total",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(Modifier.height(20.dp))
+            LinearProgressIndicator(
+                progress = { if (total == 0) 0f else done.toFloat() / total },
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Spacer(Modifier.height(16.dp))
+            TextButton(onClick = onCancel) { Text("Cancel") }
         }
     }
 }

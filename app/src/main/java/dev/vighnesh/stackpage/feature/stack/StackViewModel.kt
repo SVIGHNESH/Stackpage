@@ -11,7 +11,10 @@ import dev.vighnesh.stackpage.pdf.PageOrientation
 import dev.vighnesh.stackpage.pdf.PageSize
 import dev.vighnesh.stackpage.pdf.PageSpec
 import dev.vighnesh.stackpage.pdf.PdfExporter
+import dev.vighnesh.stackpage.pdf.PdfImporter
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,6 +33,10 @@ data class UiState(
     val pages: List<PageSpec> = emptyList(),
     val options: ExportOptions = ExportOptions(),
     val export: ExportState = ExportState.Idle,
+    /** Non-null while a PDF import renders pages: done to total. */
+    val importing: Pair<Int, Int>? = null,
+    /** One-line message the UI surfaces once, e.g. the rasterisation note. */
+    val notice: String? = null,
 ) {
     val isEmpty: Boolean get() = pages.isEmpty()
 }
@@ -40,6 +47,13 @@ class StackViewModel(app: Application) : AndroidViewModel(app) {
     val state: StateFlow<UiState> = _state.asStateFlow()
 
     private var exportJob: Job? = null
+    private var importJob: Job? = null
+
+    init {
+        // Rendered pages from previous sessions are orphans: the page list
+        // does not survive process death, so the files must not either.
+        viewModelScope.launch(Dispatchers.IO) { PdfImporter.clearCache(getApplication()) }
+    }
 
     /** Appends a pick, skipping anything already in the stack. */
     fun addImages(uris: List<Uri>) {
@@ -63,6 +77,45 @@ class StackViewModel(app: Application) : AndroidViewModel(app) {
 
     fun clearAll() {
         _state.update { it.copy(pages = emptyList()) }
+        viewModelScope.launch(Dispatchers.IO) { PdfImporter.clearCache(getApplication()) }
+    }
+
+    /** Renders an existing PDF's pages into the stack as images. */
+    fun importPdf(uri: Uri) {
+        if (_state.value.importing != null) return
+        importJob?.cancel()
+        importJob = viewModelScope.launch(Dispatchers.IO) {
+            _state.update { it.copy(importing = 0 to 0) }
+            val result = PdfImporter.importPages(
+                context = getApplication(),
+                uri = uri,
+                onProgress = { done, total -> _state.update { it.copy(importing = done to total) } },
+                isActive = { isActive },
+            )
+            _state.update { s ->
+                when (result) {
+                    is PdfImporter.ImportResult.Pages -> s.copy(
+                        pages = s.pages + result.uris.map { PageSpec(it) },
+                        importing = null,
+                        notice = "PDF pages are re-saved as images in the export.",
+                    )
+                    is PdfImporter.ImportResult.Failed -> s.copy(
+                        importing = null,
+                        notice = result.message,
+                    )
+                }
+            }
+        }
+    }
+
+    fun cancelImport() {
+        importJob?.cancel()
+        importJob = null
+        _state.update { it.copy(importing = null) }
+    }
+
+    fun dismissNotice() {
+        _state.update { it.copy(notice = null) }
     }
 
     /** Moves the page at [from] to index [to], keeping every other page's order. */

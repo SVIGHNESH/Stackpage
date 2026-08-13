@@ -104,6 +104,8 @@ Status as of the last hardware run on a Galaxy Tab A7 Lite (SM-T225, Android 12,
 | Scan: first-use model download completes | Blocked | One-time Play services download; the tablet had no internet, Play Store logged NETWORK_ERROR and the scan bounced to the store. Connect Wi-Fi once and retry |
 | Scan: works offline after first-use download | Not run | M3 gate; airplane mode, then scan |
 | Rotate from the grid lands rotated in the export | Not run | M3 gate; check /MediaBox and by eye |
+| PDF import: merge two PDFs, split one, reorder a scan | Not run | M5 gate; verify by counting /Type /Page in the output |
+| PDF import: password-protected PDF fails gracefully | Not run | |
 | Process death behind the picker restores the route | Not run | See known issue 1a |
 | Save-all batch duration is tolerable | Not run | searchPlan re-probes per image; seed from the previous winner if slow |
 

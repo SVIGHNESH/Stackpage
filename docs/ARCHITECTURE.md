@@ -39,6 +39,7 @@ dev.vighnesh.stackpage
 │   ├── PageLayout.kt        Pure Kotlin. Page geometry in PostScript points.
 │   ├── PageTransform.kt     Pure Kotlin. Crop-then-rotate arithmetic.
 │   ├── PageSpec.kt          A page: uri + rotation + optional crop
+│   ├── PdfImporter.kt       PdfRenderer: existing PDF pages to cache JPEGs
 │   └── PdfExporter.kt       PdfDocument, one page per PageSpec
 └── io/
     ├── Pickers.kt           rememberImagePicker / rememberPdfCreator / rememberDirectoryPicker
@@ -103,7 +104,8 @@ Making this a sealed type rather than a set of booleans is what stops the "spinn
 Export runs in a `viewModelScope` coroutine held in `exportJob` so that cancellation is real: `PdfExporter` calls `ensureActive()` before each page, so cancelling stops at the next page boundary rather than after the whole document is built.
 
 Nothing is persisted.
-Killing the app loses the page stack, which is correct for a tool whose whole job is a single one-shot operation, and it means there is no cache to leak the user's images.
+Killing the app loses the page stack, which is correct for a tool whose whole job is a single one-shot operation.
+The one cache that exists is the imported-PDF page renders under `cacheDir/imported-pdf-pages`, and it is deleted on Clear all and on every process start, because the page list they belong to does not survive either.
 
 ## Why the platform PDF writer
 

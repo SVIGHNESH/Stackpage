@@ -50,6 +50,26 @@ fun rememberImagePicker(onPicked: (List<Uri>) -> Unit): () -> Unit {
     }
 }
 
+/** Returns a launch function for picking an existing PDF via SAF. */
+@Composable
+fun rememberPdfPicker(onPicked: (Uri) -> Unit): () -> Unit {
+    val context = LocalContext.current
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument(),
+    ) { uri ->
+        uri?.let {
+            runCatching {
+                context.contentResolver.takePersistableUriPermission(
+                    it,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION,
+                )
+            }
+            onPicked(it)
+        }
+    }
+    return { launcher.launch(arrayOf("application/pdf")) }
+}
+
 /** Returns a launch function for picking an output folder via SAF. */
 @Composable
 fun rememberDirectoryPicker(onPicked: (Uri) -> Unit): () -> Unit {
