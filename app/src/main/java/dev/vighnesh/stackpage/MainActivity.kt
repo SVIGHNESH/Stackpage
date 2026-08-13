@@ -70,7 +70,6 @@ private fun StackpageNavHost() {
                         popUpTo(Routes.HOME)
                     }
                 },
-                onCancelled = { navController.popBackStack() },
             )
         }
     }
