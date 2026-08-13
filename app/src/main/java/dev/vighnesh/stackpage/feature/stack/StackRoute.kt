@@ -1,5 +1,7 @@
 package dev.vighnesh.stackpage.feature.stack
 
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
@@ -17,7 +19,11 @@ import dev.vighnesh.stackpage.io.shareFile
  */
 @Composable
 fun StackRoute() {
-    val vm: StackViewModel = viewModel()
+    // Scoped to the activity, not the back-stack entry, so leaving for home
+    // and coming back keeps the page stack. The pre-navigation app behaved
+    // this way, and M1 is a refactor with zero behaviour change.
+    val activity = checkNotNull(LocalActivity.current as? ComponentActivity)
+    val vm: StackViewModel = viewModel(viewModelStoreOwner = activity)
     val state by vm.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
