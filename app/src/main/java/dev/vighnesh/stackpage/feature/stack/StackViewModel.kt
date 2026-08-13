@@ -33,7 +33,7 @@ data class UiState(
     val isEmpty: Boolean get() = images.isEmpty()
 }
 
-class MainViewModel(app: Application) : AndroidViewModel(app) {
+class StackViewModel(app: Application) : AndroidViewModel(app) {
 
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state.asStateFlow()

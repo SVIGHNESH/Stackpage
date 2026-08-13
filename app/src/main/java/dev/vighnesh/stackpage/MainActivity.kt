@@ -14,8 +14,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.vighnesh.stackpage.feature.stack.MainScreen
-import dev.vighnesh.stackpage.feature.stack.MainViewModel
+import dev.vighnesh.stackpage.feature.stack.StackScreen
+import dev.vighnesh.stackpage.feature.stack.StackViewModel
 import dev.vighnesh.stackpage.ui.theme.StackpageTheme
 
 class MainActivity : ComponentActivity() {
@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             StackpageTheme {
-                val vm: MainViewModel = viewModel()
+                val vm: StackViewModel = viewModel()
                 val state by vm.state.collectAsStateWithLifecycle()
                 val context = LocalContext.current
 
@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
                     ActivityResultContracts.CreateDocument("application/pdf"),
                 ) { target -> target?.let(vm::export) }
 
-                MainScreen(
+                StackScreen(
                     state = state,
                     onPickImages = {
                         pickImages.launch(

@@ -67,7 +67,7 @@ import dev.vighnesh.stackpage.pdf.PageSize
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(
+fun StackScreen(
     state: UiState,
     onPickImages: () -> Unit,
     onMove: (Int, Int) -> Unit,
