@@ -95,6 +95,8 @@ Status as of the last hardware run on a Galaxy Tab A7 Lite (SM-T225, Android 12,
 | Compress: screenshot PNG converts and hits target | Not run | M2 gate |
 | Compress: batch of 6 saves into the chosen folder | Not run | M2 gate |
 | Compress: unreachable target says "best possible" | Not run | |
+| Process death behind the picker restores the route | Not run | See known issue 1a |
+| Save-all batch duration is tolerable | Not run | searchPlan re-probes per image; seed from the previous winner if slow |
 
 ## Known issues
 
@@ -104,6 +106,12 @@ Its remove button also rendered without the circular scrim behind it.
 Suspected to be a Coil sizing or placeholder issue on the first composed item rather than anything in the layout, but it is unconfirmed.
 Cosmetic, does not affect the exported PDF.
 Re-logged after the M1 refactor: the grid now lives at `feature/stack/PageGrid.kt`, behaviour unchanged; reproduction needs the device, which is currently offline.
+
+**1a. Navigation reset to home behind the photo picker, observed once.**
+On the first-ever picker launch after installing 1.1 on the SM-T225, "Choose images" cold-started the picker (~14s covered), and the app came back on the *home* screen instead of the stack screen.
+Suspicion: activity recreation while covered, with nav state not restored.
+Not yet reproduced - the second launch behaved correctly.
+Check on the next pass: kill the process while the picker is open (`am kill`) and confirm the stack route is restored on return.
 
 **2. Release APK is unsigned.**
 No keystore and no signing config. See `docs/RUNBOOK.md` section 6.
