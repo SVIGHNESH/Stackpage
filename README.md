@@ -70,12 +70,18 @@ Layout is a single column with one primary CTA per screen and no bottom navigati
 
 Font licence: `OFL.txt` (SIL Open Font License 1.1).
 
-## Roadmap
+## Documentation
 
-1. **Crop and rotate** - uCrop or canhub's Android-Image-Cropper, applied per page before export.
-2. **Compress and resize** - target-size search over `Bitmap.compress`, with a live output-size estimate.
-3. **Format conversion** - JPG/PNG/WebP out, sharing the same decode path.
-4. **Batch and background** - WorkManager for large exports so a 100-page job survives the app being backgrounded.
-5. **Strip EXIF/GPS on export** - a real privacy feature, and a natural extension of the current decode step.
+The reasoning lives in `docs/`, and `CLAUDE.md` is the entry point for anyone, human or agent, picking the repo up cold.
 
-Before any of these: get the app onto a real device or an emulator and look at it.
+| Document | What it answers |
+| --- | --- |
+| [`CLAUDE.md`](CLAUDE.md) | What this is, the invariants that must not be broken, and the house rules for changes |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Module layout, data flow, the Android-free seam, and the memory budget |
+| [`docs/DECISIONS.md`](docs/DECISIONS.md) | Why each choice was made, what was rejected, and what would justify revisiting it |
+| [`docs/RUNBOOK.md`](docs/RUNBOOK.md) | Build, install, drive the app over adb, verify a PDF, cut a release, get unstuck |
+| [`docs/TESTING.md`](docs/TESTING.md) | Test coverage, the manual QA matrix, known issues, and the regression log |
+| [`docs/ROADMAP.md`](docs/ROADMAP.md) | What is next, what each item will break, and what is deliberately not planned |
+
+Next up is an instrumented test for `ImageSource`.
+The one shipped export bug lived there, was invisible to every existing test, and broke every export.
