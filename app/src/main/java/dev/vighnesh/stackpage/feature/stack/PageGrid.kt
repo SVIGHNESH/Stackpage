@@ -2,6 +2,7 @@ package dev.vighnesh.stackpage.feature.stack
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -61,6 +62,7 @@ fun PageGrid(
     onMove: (from: Int, to: Int) -> Unit,
     onRemove: (Uri) -> Unit,
     onRotate: (Uri) -> Unit,
+    onEdit: (Uri) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
     state: LazyGridState = rememberLazyGridState(),
@@ -116,6 +118,7 @@ fun PageGrid(
                 isDragging = draggingIndex == index,
                 onRemove = { onRemove(page.uri) },
                 onRotate = { onRotate(page.uri) },
+                onEdit = { onEdit(page.uri) },
                 modifier = Modifier.animateItem(),
             )
         }
@@ -129,6 +132,7 @@ private fun PageThumbnail(
     isDragging: Boolean,
     onRemove: () -> Unit,
     onRotate: () -> Unit,
+    onEdit: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     // A small lift rather than a jump: the card should read as picked up, not
@@ -146,7 +150,8 @@ private fun PageThumbnail(
             .shadow(elevation, RoundedCornerShape(14.dp))
             .clip(RoundedCornerShape(14.dp))
             .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-            .semantics { contentDescription = "Page $pageNumber. Long press to reorder." },
+            .clickable(onClick = onEdit)
+            .semantics { contentDescription = "Page $pageNumber. Tap to edit, long press to reorder." },
     ) {
         // The thumbnail previews the rotation; the export applies it to the
         // pixels. Crop preview waits for the editor.

@@ -19,7 +19,8 @@ dev.vighnesh.stackpage
 │   │   ├── StackRoute.kt    Wires the view model and the io/ launchers
 │   │   ├── StackScreen.kt   Empty state, export bar, options sheet, result overlays
 │   │   ├── StackViewModel.kt Page stack, export options, export state
-│   │   └── PageGrid.kt      Reorderable thumbnail grid
+│   │   ├── PageGrid.kt      Reorderable thumbnail grid; tap opens the editor
+│   │   └── CropEditor.kt    Full-screen crop and rotate for one page
 │   ├── compress/            Compress-to-target-size
 │   │   ├── CompressRoute.kt
 │   │   ├── CompressScreen.kt Target chips, item list, save bar

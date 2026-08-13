@@ -57,6 +57,36 @@ class PageSpecTest {
     }
 
     @Test
+    fun displayAndSourceCropsRoundTripAtEveryRotation() {
+        val crop = CropRect(0.1f, 0.2f, 0.7f, 0.9f)
+        for (rotation in listOf(0, 90, 180, 270)) {
+            val there = dev.vighnesh.stackpage.pdf.displayToSourceCrop(crop, rotation)
+            val back = dev.vighnesh.stackpage.pdf.sourceToDisplayCrop(there, rotation)
+            // 1-(1-x) is not exact in float, so tolerance, not equality.
+            for ((a, b) in listOf(
+                crop.left to back.left, crop.top to back.top,
+                crop.right to back.right, crop.bottom to back.bottom,
+            )) {
+                assertEquals(a.toDouble(), b.toDouble(), 1e-6, "round trip at $rotation")
+            }
+        }
+    }
+
+    @Test
+    fun displayCropMapsToTheRightSourceRegion() {
+        // Display shows the source rotated 90 clockwise. The top-left quarter
+        // of the display is the source's bottom-left quarter.
+        val displayTopLeft = CropRect(0f, 0f, 0.5f, 0.5f)
+        val source = dev.vighnesh.stackpage.pdf.displayToSourceCrop(displayTopLeft, 90)
+        assertEquals(CropRect(0f, 0.5f, 0.5f, 1f), source)
+        // The full rect is rotation-invariant.
+        val full = CropRect(0f, 0f, 1f, 1f)
+        for (rotation in listOf(0, 90, 180, 270)) {
+            assertEquals(full, dev.vighnesh.stackpage.pdf.displayToSourceCrop(full, rotation))
+        }
+    }
+
+    @Test
     fun invalidCropsThrow() {
         assertFailsWith<IllegalArgumentException> { CropRect(0.5f, 0f, 0.5f, 1f) }
         assertFailsWith<IllegalArgumentException> { CropRect(-0.1f, 0f, 1f, 1f) }

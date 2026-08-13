@@ -104,6 +104,8 @@ Status as of the last hardware run on a Galaxy Tab A7 Lite (SM-T225, Android 12,
 | Scan: first-use model download completes | Pass | Completed on the owner's phone; the scanner camera UI runs with Manual/Auto capture |
 | Scan: works offline after first-use download | Not run | M3 gate; airplane mode, then scan |
 | Rotate from the grid lands rotated in the export | Not run | M3 gate; check /MediaBox and by eye |
+| Crop editor: drag handles, apply, crop lands in export | Not run | Tap a thumbnail to open; mapping maths is JVM-tested |
+| Crop editor: crop of a rotated page crops the right region | Not run | The display-to-source mapping is where this would break |
 | PDF import: merge two PDFs, split one, reorder a scan | Not run | M5 gate; verify by counting /Type /Page in the output |
 | PDF import: password-protected PDF fails gracefully | Not run | |
 | Protect: output refuses to open without the password in two third-party viewers | Not run | M6 gate |

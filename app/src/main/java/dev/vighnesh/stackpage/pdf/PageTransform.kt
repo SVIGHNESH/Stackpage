@@ -49,6 +49,32 @@ fun cropPixels(width: Int, height: Int, crop: CropRect): PixelRect {
     return PixelRect(x, y, x2 - x, y2 - y)
 }
 
+/**
+ * Maps a crop drawn on the *rotated, displayed* image back to source-space
+ * fractions, which is what PageSpec stores because the export crops before
+ * it rotates. The editor shows the image the way the page will look, so the
+ * user drags in display space; this is the change of coordinates.
+ *
+ * Derivation for 90 (clockwise): a source fraction point (x, y) lands at
+ * display (1-y, x), so the inverse is x = v, y = 1-u.
+ */
+fun displayToSourceCrop(crop: CropRect, rotationDegrees: Int): CropRect =
+    when (normalizeRotation(rotationDegrees)) {
+        0 -> crop
+        90 -> CropRect(crop.top, 1f - crop.right, crop.bottom, 1f - crop.left)
+        180 -> CropRect(1f - crop.right, 1f - crop.bottom, 1f - crop.left, 1f - crop.top)
+        else -> CropRect(1f - crop.bottom, crop.left, 1f - crop.top, crop.right)
+    }
+
+/** The inverse of [displayToSourceCrop]: where a stored crop sits on screen. */
+fun sourceToDisplayCrop(crop: CropRect, rotationDegrees: Int): CropRect =
+    when (normalizeRotation(rotationDegrees)) {
+        0 -> crop
+        90 -> CropRect(1f - crop.bottom, crop.left, 1f - crop.top, crop.right)
+        180 -> CropRect(1f - crop.right, 1f - crop.bottom, 1f - crop.left, 1f - crop.top)
+        else -> CropRect(crop.top, 1f - crop.right, crop.bottom, 1f - crop.left)
+    }
+
 /** Page dimensions after crop and rotation, the size layoutPage will see. */
 fun transformedSize(width: Int, height: Int, rotationDegrees: Int, crop: CropRect?): Pair<Int, Int> {
     require(width > 0 && height > 0) { "source dimensions must be positive" }

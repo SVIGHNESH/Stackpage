@@ -9,6 +9,7 @@ import dev.vighnesh.stackpage.pdf.ExportResult
 import dev.vighnesh.stackpage.pdf.Margin
 import dev.vighnesh.stackpage.pdf.PageOrientation
 import dev.vighnesh.stackpage.pdf.PageSize
+import dev.vighnesh.stackpage.pdf.CropRect
 import dev.vighnesh.stackpage.pdf.PageSpec
 import dev.vighnesh.stackpage.pdf.PdfExporter
 import dev.vighnesh.stackpage.pdf.PdfImporter
@@ -37,6 +38,8 @@ data class UiState(
     val importing: Pair<Int, Int>? = null,
     /** One-line message the UI surfaces once, e.g. the rasterisation note. */
     val notice: String? = null,
+    /** The page open in the crop/rotate editor, if any. */
+    val editing: PageSpec? = null,
 ) {
     val isEmpty: Boolean get() = pages.isEmpty()
 }
@@ -72,6 +75,25 @@ class StackViewModel(app: Application) : AndroidViewModel(app) {
     fun rotatePage(uri: Uri) {
         _state.update { s ->
             s.copy(pages = s.pages.map { if (it.uri == uri) it.rotatedClockwise() else it })
+        }
+    }
+
+    fun openEditor(uri: Uri) {
+        _state.update { s -> s.copy(editing = s.pages.firstOrNull { it.uri == uri }) }
+    }
+
+    fun closeEditor() {
+        _state.update { it.copy(editing = null) }
+    }
+
+    fun applyEdit(uri: Uri, rotationDegrees: Int, crop: CropRect?) {
+        _state.update { s ->
+            s.copy(
+                pages = s.pages.map {
+                    if (it.uri == uri) it.copy(rotationDegrees = rotationDegrees, crop = crop) else it
+                },
+                editing = null,
+            )
         }
     }
 

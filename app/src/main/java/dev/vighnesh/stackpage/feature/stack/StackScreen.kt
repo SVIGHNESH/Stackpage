@@ -74,6 +74,9 @@ fun StackScreen(
     onMove: (Int, Int) -> Unit,
     onRemove: (Uri) -> Unit,
     onRotate: (Uri) -> Unit,
+    onEdit: (Uri) -> Unit,
+    onCloseEditor: () -> Unit,
+    onApplyEdit: (Uri, Int, dev.vighnesh.stackpage.pdf.CropRect?) -> Unit,
     onClearAll: () -> Unit,
     onPageSize: (PageSize) -> Unit,
     onOrientation: (PageOrientation) -> Unit,
@@ -128,6 +131,7 @@ fun StackScreen(
                     onMove = onMove,
                     onRemove = onRemove,
                     onRotate = onRotate,
+                    onEdit = onEdit,
                     // The grid scrolls under the bars, so the padding goes on the
                     // content rather than the container.
                     contentPadding = PaddingValues(
@@ -150,6 +154,14 @@ fun StackScreen(
                         Text("Add PDF", style = MaterialTheme.typography.labelLarge)
                     }
                 }
+            }
+
+            state.editing?.let { page ->
+                CropEditor(
+                    page = page,
+                    onCancel = onCloseEditor,
+                    onApply = { rotation, crop -> onApplyEdit(page.uri, rotation, crop) },
+                )
             }
 
             state.importing?.let { (done, total) ->
