@@ -101,11 +101,13 @@ Status as of the last hardware run on a Galaxy Tab A7 Lite (SM-T225, Android 12,
 | Convert: preset resize fits the box, no upscale | Not run | M4 gate; fitWithin is JVM-tested |
 | Scan: paper to legible A4 under 500 KB with B&W filter | Not run | M3 gate |
 | Scan: scanner activity launches under the stripped manifest | Pass | GMS DocumentScanningActivity confirmed in its own process |
-| Scan: first-use model download completes | Blocked | One-time Play services download; the tablet had no internet, Play Store logged NETWORK_ERROR and the scan bounced to the store. Connect Wi-Fi once and retry |
+| Scan: first-use model download completes | Pass | Completed on the owner's phone; the scanner camera UI runs with Manual/Auto capture |
 | Scan: works offline after first-use download | Not run | M3 gate; airplane mode, then scan |
 | Rotate from the grid lands rotated in the export | Not run | M3 gate; check /MediaBox and by eye |
 | PDF import: merge two PDFs, split one, reorder a scan | Not run | M5 gate; verify by counting /Type /Page in the output |
 | PDF import: password-protected PDF fails gracefully | Not run | |
+| Protect: output refuses to open without the password in two third-party viewers | Not run | M6 gate |
+| Protect: already-protected PDF reports it instead of crashing | Not run | |
 | Process death behind the picker restores the route | Not run | See known issue 1a |
 | Save-all batch duration is tolerable | Not run | searchPlan re-probes per image; seed from the previous winner if slow |
 

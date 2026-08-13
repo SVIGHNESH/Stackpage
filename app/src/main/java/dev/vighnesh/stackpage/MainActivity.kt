@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dev.vighnesh.stackpage.feature.compress.CompressRoute
 import dev.vighnesh.stackpage.feature.convert.ConvertRoute
+import dev.vighnesh.stackpage.feature.protect.ProtectRoute
 import dev.vighnesh.stackpage.feature.scan.ScanRoute
 import dev.vighnesh.stackpage.feature.stack.StackRoute
 import dev.vighnesh.stackpage.ui.home.HomeScreen
@@ -38,6 +39,7 @@ object Routes {
     const val COMPRESS = "compress"
     const val CONVERT = "convert"
     const val SCAN = "scan"
+    const val PROTECT = "protect"
 }
 
 @Composable
@@ -50,6 +52,7 @@ private fun StackpageNavHost() {
                 onOpenStack = { navController.navigate(Routes.STACK) },
                 onOpenCompress = { navController.navigate(Routes.COMPRESS) },
                 onOpenConvert = { navController.navigate(Routes.CONVERT) },
+                onOpenProtect = { navController.navigate(Routes.PROTECT) },
             )
         }
         composable(Routes.STACK) {
@@ -60,6 +63,9 @@ private fun StackpageNavHost() {
         }
         composable(Routes.CONVERT) {
             ConvertRoute()
+        }
+        composable(Routes.PROTECT) {
+            ProtectRoute()
         }
         composable(Routes.SCAN) {
             ScanRoute(

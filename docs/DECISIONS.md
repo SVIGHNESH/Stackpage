@@ -186,3 +186,19 @@ Rendered page files are the app's only cache and are deleted on Clear all and on
 
 **Rejected:** a separate pdfpages feature (duplicate surface); lossless page operations (needs a real PDF library, which is M6's decision).
 **Revisit if:** M6 adds PDFBox, whose page-level copy would make lossless reorder and merge possible for born-digital PDFs.
+
+---
+
+## 16. PDFBox-Android comes in for encryption; decision 3 partially reversed
+
+Decision 3 chose the platform `PdfDocument` and named encryption as its revisit condition.
+That condition is met: protect-a-PDF needs real encryption, the platform writer has none, and PDFBox-Android provides AES-128 via `StandardProtectionPolicy` with no permission footprint (`aapt dump permissions` stays clean after the merge).
+The cost is roughly 9MB on the debug APK (21MB to 30MB); R8 shrinks release builds and the trade was accepted for a working Protect tool.
+
+The export path does not move: `PdfDocument` still writes every stack export.
+PDFBox is only opened where the platform has nothing - encryption now, potentially lossless page operations and the signature stamp later.
+
+The signature half of the roadmap's 2.4 is deferred, not dropped: drawing a signature and drag-placing it on a page is a full editor surface, and it should land together with the crop editor rather than as a second bespoke gesture layer.
+
+**Rejected:** iText (AGPL); shipping encryption through a rasterise-and-rebuild trick (destroys text).
+**Revisit if:** APK size becomes a complaint, in which case R8 rules for PDFBox get tightened first.

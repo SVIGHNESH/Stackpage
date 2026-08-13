@@ -28,8 +28,12 @@ dev.vighnesh.stackpage
 │   │   ├── ConvertRoute.kt
 │   │   ├── ConvertScreen.kt  Format chips, size-preset chips, item list
 │   │   └── ConvertViewModel.kt JPG/PNG/WebP out, fit-within resize, SAF tree
-│   └── scan/
-│       └── ScanRoute.kt     Launches the ML Kit scanner, pages join the stack
+│   ├── scan/
+│   │   └── ScanRoute.kt     Landing screen; launches the ML Kit scanner
+│   └── protect/             Password-protect any PDF
+│       ├── ProtectRoute.kt
+│       ├── ProtectScreen.kt  File card, password field, save
+│       └── ProtectViewModel.kt PDFBox AES-128 StandardProtectionPolicy
 ├── image/
 │   ├── ImageSource.kt       Shared decode engine: EXIF rotation, downsampling
 │   ├── TargetSizeSearch.kt  Pure Kotlin. Quality/scale search over an injected probe.
