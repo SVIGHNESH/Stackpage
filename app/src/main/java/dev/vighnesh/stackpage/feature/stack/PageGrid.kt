@@ -1,4 +1,4 @@
-package dev.vighnesh.stackpage.ui
+package dev.vighnesh.stackpage.feature.stack
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background

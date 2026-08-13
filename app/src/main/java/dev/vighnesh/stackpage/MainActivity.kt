@@ -14,8 +14,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.vighnesh.stackpage.ui.MainScreen
-import dev.vighnesh.stackpage.ui.MainViewModel
+import dev.vighnesh.stackpage.feature.stack.MainScreen
+import dev.vighnesh.stackpage.feature.stack.MainViewModel
 import dev.vighnesh.stackpage.ui.theme.StackpageTheme
 
 class MainActivity : ComponentActivity() {

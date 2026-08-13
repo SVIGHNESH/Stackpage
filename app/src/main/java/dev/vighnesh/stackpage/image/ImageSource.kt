@@ -1,4 +1,4 @@
-package dev.vighnesh.stackpage.pdf
+package dev.vighnesh.stackpage.image
 
 import android.content.Context
 import android.graphics.Bitmap

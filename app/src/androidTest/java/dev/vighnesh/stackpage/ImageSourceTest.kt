@@ -1,7 +1,7 @@
 package dev.vighnesh.stackpage
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import dev.vighnesh.stackpage.pdf.ImageSource
+import dev.vighnesh.stackpage.image.ImageSource
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull

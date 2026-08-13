@@ -1,4 +1,4 @@
-package dev.vighnesh.stackpage.ui
+package dev.vighnesh.stackpage.feature.stack
 
 import android.app.Application
 import android.net.Uri
