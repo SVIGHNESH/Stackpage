@@ -23,6 +23,7 @@ import androidx.compose.material.icons.rounded.Compress
 import androidx.compose.material.icons.rounded.DocumentScanner
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.PictureAsPdf
+import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material.icons.rounded.SwapHoriz
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -48,6 +49,7 @@ fun HomeScreen(
     onOpenCompress: () -> Unit,
     onOpenConvert: () -> Unit,
     onOpenProtect: () -> Unit,
+    onOpenClean: () -> Unit,
 ) {
     // The footer is a bottom bar and the cards scroll: four cards at a large
     // font scale overflow a phone screen, and a pinned-footer Column with no
@@ -113,6 +115,13 @@ fun HomeScreen(
                 title = "Protect a PDF",
                 description = "Save a copy that opens only with a password you set.",
                 onClick = onOpenProtect,
+            )
+            Spacer(Modifier.height(12.dp))
+            ToolCard(
+                icon = Icons.Rounded.Shield,
+                title = "Clean metadata",
+                description = "Save copies with location, time, and camera details removed.",
+                onClick = onOpenClean,
             )
 
             Spacer(Modifier.height(24.dp))

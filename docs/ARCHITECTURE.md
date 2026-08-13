@@ -30,6 +30,10 @@ dev.vighnesh.stackpage
 │   │   └── ConvertViewModel.kt JPG/PNG/WebP out, fit-within resize, SAF tree
 │   ├── scan/
 │   │   └── ScanRoute.kt     Landing screen; launches the ML Kit scanner
+│   ├── clean/               Metadata removal by re-encode
+│   │   ├── CleanRoute.kt
+│   │   ├── CleanScreen.kt
+│   │   └── CleanViewModel.kt Decode at 4096px cap, fresh JPEG, SAF tree
 │   └── protect/             Password-protect any PDF
 │       ├── ProtectRoute.kt
 │       ├── ProtectScreen.kt  File card, password field, save
