@@ -41,10 +41,12 @@ object ImageSource {
      * EXIF rotation already applied. Returns null if the image cannot be read.
      */
     fun decode(context: Context, uri: Uri, maxEdge: Int = EXPORT_MAX_EDGE): Bitmap? {
+        // The elvis has to guard the stream, not the block. A bounds-only pass
+        // returns a null Bitmap by definition, so `use { decodeStream(...) } ?:`
+        // would abort on every image, however healthy.
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-        context.contentResolver.openInputStream(uri)?.use {
-            BitmapFactory.decodeStream(it, null, bounds)
-        } ?: return null
+        val boundsStream = context.contentResolver.openInputStream(uri) ?: return null
+        boundsStream.use { BitmapFactory.decodeStream(it, null, bounds) }
         if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return null
 
         val opts = BitmapFactory.Options().apply {
@@ -53,9 +55,8 @@ object ImageSource {
             // memory cost of every decode.
             inPreferredConfig = Bitmap.Config.RGB_565
         }
-        val decoded = context.contentResolver.openInputStream(uri)?.use {
-            BitmapFactory.decodeStream(it, null, opts)
-        } ?: return null
+        val pixelStream = context.contentResolver.openInputStream(uri) ?: return null
+        val decoded = pixelStream.use { BitmapFactory.decodeStream(it, null, opts) } ?: return null
 
         val rotation = readRotationDegrees(context, uri)
         return if (rotation == 0) decoded else rotate(decoded, rotation)

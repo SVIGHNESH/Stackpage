@@ -12,7 +12,9 @@ v1 covers the whole core loop: pick → reorder → export.
 Crop, rotate, resize, compress and format conversion are planned but not built (see [Roadmap](#roadmap)).
 
 `./gradlew :app:assembleDebug test` passes: the debug APK builds and 15 JVM unit tests cover the page-layout arithmetic.
-Nothing here has been seen running on a screen - there is no AVD and no system image on this machine, so the UI is unverified visually.
+
+Verified on a real device (Galaxy Tab A7 Lite, Android 12, dark theme): pick a photo, see it in the grid, export, and the resulting file is a valid A4 PDF with `/MediaBox [0 0 595 842]` and the auto-orientation applied.
+Still unverified on a screen: light theme, multi-page reorder by drag, and the export options sheet.
 
 ## Build
 
@@ -51,6 +53,7 @@ The arithmetic that decides where an image lands on a page - aspect fit, centrin
 - **EXIF rotation is applied on decode.** Most phone cameras store the sensor orientation and put the real one in EXIF; without this, portrait photos export sideways.
 - **Bitmaps decode as RGB_565.** A printed page has no alpha, and this halves the memory cost of every decode.
 - **Drag-to-reorder is hand-written** against `LazyGridState` rather than pulled in as a dependency. It is about sixty lines, and owning it keeps the drag threshold, haptic and swap rule tunable.
+- **The elvis operator guards the stream, not the `use` block, in `ImageSource.decode`.** A bounds-only `BitmapFactory.decodeStream` returns a null `Bitmap` by definition, so `openInputStream(uri)?.use { decodeStream(...) } ?: return null` aborts on every image however healthy it is. That shape compiles, reads fine, and breaks the entire export path.
 - **No dynamic colour.** Wallpaper-derived palettes routinely produce a pastel primary that reads as "photo gallery", which is the wrong promise for a tool that makes documents.
 
 ## Design
