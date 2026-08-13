@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.Compress
@@ -45,14 +47,15 @@ fun HomeScreen(
     onOpenCompress: () -> Unit,
     onOpenConvert: () -> Unit,
 ) {
-    Scaffold { padding ->
-        // No verticalScroll here: weight() needs a bounded height to pin the
-        // footer, and one card does not need to scroll. Revisit when the card
-        // list outgrows a short screen.
+    // The footer is a bottom bar and the cards scroll: four cards at a large
+    // font scale overflow a phone screen, and a pinned-footer Column with no
+    // scroll silently clips whatever does not fit.
+    Scaffold(bottomBar = { HomeFooter() }) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp),
         ) {
             Spacer(Modifier.height(40.dp))
@@ -103,33 +106,38 @@ fun HomeScreen(
                 onClick = onOpenConvert,
             )
 
-            Spacer(Modifier.weight(1f))
-            Spacer(Modifier.height(40.dp))
-            Text(
-                "Everything happens on this device. Nothing is uploaded.",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            Spacer(Modifier.height(8.dp))
-            // Opening the link is the browser's job; this app keeps holding
-            // no network permission of its own.
-            val context = LocalContext.current
-            Text(
-                "Made by Vighnesh Shukla · github.com/svighnesh",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .clickable {
-                        runCatching {
-                            context.startActivity(
-                                Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/svighnesh")),
-                            )
-                        }
-                    }
-                    .padding(bottom = 24.dp),
-            )
+            Spacer(Modifier.height(24.dp))
         }
+    }
+}
+
+@Composable
+private fun HomeFooter() {
+    val context = LocalContext.current
+    Column(Modifier.padding(horizontal = 24.dp)) {
+        Text(
+            "Everything happens on this device. Nothing is uploaded.",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        Spacer(Modifier.height(6.dp))
+        // Opening the link is the browser's job; this app keeps holding no
+        // network permission of its own.
+        Text(
+            "Made by Vighnesh Shukla · github.com/svighnesh",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+                .clickable {
+                    runCatching {
+                        context.startActivity(
+                            Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/svighnesh")),
+                        )
+                    }
+                }
+                .padding(bottom = 16.dp),
+        )
     }
 }
 
