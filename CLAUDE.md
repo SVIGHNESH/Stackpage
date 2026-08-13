@@ -73,6 +73,11 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 
 `docs/RUNBOOK.md` has the full adb sequence for driving the pick-reorder-export flow on a device, including how to seed synthetic test images so no personal photo ends up in a screenshot.
 
+## Git identity
+
+Commits use the repo-local `git config user.email`, which is set to the owner's GitHub noreply address.
+Never pass a different email via `-c user.email`, and never write any personal or institutional email address into commits, configs, or docs in this public repo.
+
 ## House rules for changes
 
 - Reproduce a bug end to end on a device before touching the implementation. The one export bug found so far was invisible to the compiler, invisible to the unit tests, and obvious in one run on hardware.
