@@ -165,7 +165,9 @@ The library's manifest merges `INTERNET` and `ACCESS_NETWORK_STATE` into consume
 Both are stripped with `tools:node="remove"`, and `aapt dump permissions` on the built APK is the check: it must list nothing beyond the app's own auto-generated `DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`.
 Model delivery and any network the scanner needs happen in Play services' own process under its own permissions; the honest phrasing of the claim is "no network *by this app*".
 
-The plan's hardware spike is still owed and was deferred at the owner's instruction: verify on the SM-T225 that scanning works with the stripped manifest and needs no network at scan time.
+The plan's hardware spike is half-answered.
+On the SM-T225 the scanner activity launches correctly in Play services' own process under the stripped manifest, but first use requires a one-time on-device model download by Play services, and with no internet on the tablet the scan bounced to the Play Store with NETWORK_ERROR.
+Still owed once the download has completed on Wi-Fi: verify scanning works in airplane mode.
 If the scanner fails under the stripped manifest, the fallback stands: CameraX capture plus our own perspective crop, with CAMERA added as a deliberate, documented change.
 
 **Rejected:** CameraX-first (owns a camera session and the permission for a job the platform already hosts); shipping the merged INTERNET permission (breaks the only claim).
