@@ -140,3 +140,16 @@ A bottom navigation bar or a drawer would be furniture around a task that has no
 
 **Rejected:** a nav host with separate screens for the grid and the options.
 **Revisit if:** the roadmap's editing features land. Crop and rotate need a per-image editor, which is the first genuine second destination.
+
+---
+
+## 13. The app opens on a home screen
+
+The single-screen decision (12) is reversed: the roadmap turns Stackpage into a small collection of document tools, and every one of them needs somewhere to launch from.
+`MainActivity` is now theme plus nav host, `home` is the start destination, and the PDF flow lives at `stack`.
+
+The cost is one extra tap for the existing flow.
+That tap is accepted as the price of every future tool having a front door, instead of the first tool owning the whole app.
+
+**Rejected:** keeping `stack` as the start destination until a second tool exists, which would make the framework refactor invisible and unexercised.
+**Revisit if:** usage shows the PDF flow is still effectively the only tool after the roadmap's first wave lands.

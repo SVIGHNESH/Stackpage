@@ -27,17 +27,31 @@ They cover `layoutPage` only, which is the whole of the page geometry:
 That last sweep is the one that catches regressions cheaply.
 Any new `PageSize` or `Margin` is automatically covered by it.
 
+## Instrumented coverage (M0)
+
+```bash
+./gradlew :app:connectedDebugAndroidTest
+```
+
+Six tests in `app/src/androidTest/`, running the real `BitmapFactory` and `ExifInterface` path against synthetic fixtures bundled as androidTest assets.
+
+- `ImageSourceTest`: plain decode at expected size, EXIF orientation 6 comes back upright as 1200x900, a 6000x8000 source downsamples, garbage bytes return null instead of throwing, and `readSize` agrees with `decode` on orientation.
+- `PdfExporterTest`: exports two fixtures and asserts the output starts with `%PDF` and holds two `/Type /Page` entries.
+
+This is the suite that would have caught the shipped decode regression in seconds.
+
+One finding pinned by the suite rather than fixed: `inSampleSize` is power-of-two, so the decoded long edge lands in [`EXPORT_MAX_EDGE`, 2x`EXPORT_MAX_EDGE`), not at the bound itself.
+The page layout's destination rect does the final scaling, so this costs memory headroom, not correctness.
+
+**Status: written and compiling; the device run is pending.**
+The SM-T225 dropped off adb during the first attempted run and has not reconnected.
+Run the command above and update this line when it passes.
+
 ## What has no automated coverage
 
-Everything on the Android side of the seam, which is most of the risk:
-
-- `ImageSource` decoding, EXIF rotation and downsampling. `BitmapFactory` and `ExifInterface` are Android, so this needs an instrumented test or a device. The one shipped export bug lived here and no JVM test could have caught it.
-- `PdfExporter` page construction, progress, cancellation and bitmap recycling.
-- Every composable: the empty state, the grid, drag reorder, the options sheet, and the three export overlays.
+- `PdfExporter` cancellation and bitmap recycling under memory pressure.
+- Every composable: the home screen, the empty state, the grid, drag reorder, the options sheet, and the three export overlays.
 - The two system pickers and the URI grants they hand back.
-
-Closing the `ImageSource` gap with a `connectedAndroidTest` is the highest-value testing work available.
-It would have caught the export bug in seconds and needs only a fixture image pushed to the device.
 
 ## Enforcing the Android-free seam
 
@@ -57,6 +71,7 @@ Status as of the last hardware run on a Galaxy Tab A7 Lite (SM-T225, Android 12,
 
 | Case | Status | Notes |
 | --- | --- | --- |
+| Home screen renders, card opens the stack | Not run | New in M1, needs the device |
 | Empty state renders | Pass | Type scale, palette and centring correct |
 | Pick a single image | Pass | Photo Picker returns, thumbnail appears |
 | Pick six images | Pass | Grid fills left to right, page numbers 1-6 correct |
@@ -83,6 +98,7 @@ In the six-image grid run, page 1's thumbnail rendered letterboxed inside its ca
 Its remove button also rendered without the circular scrim behind it.
 Suspected to be a Coil sizing or placeholder issue on the first composed item rather than anything in the layout, but it is unconfirmed.
 Cosmetic, does not affect the exported PDF.
+Re-logged after the M1 refactor: the grid now lives at `feature/stack/PageGrid.kt`, behaviour unchanged; reproduction needs the device, which is currently offline.
 
 **2. Release APK is unsigned.**
 No keystore and no signing config. See `docs/RUNBOOK.md` section 6.

@@ -10,16 +10,25 @@ The boundary is enforced by convention instead, and `docs/TESTING.md` explains h
 
 ```
 dev.vighnesh.stackpage
-├── MainActivity.kt          Activity, the two system pickers, intent plumbing
+├── MainActivity.kt          Theme plus nav host, nothing else
+├── ui/
+│   ├── home/HomeScreen.kt   Tool launcher: sections of cards, not an icon grid
+│   └── theme/               Colour scheme and type scale
+├── feature/
+│   └── stack/               The PDF flow
+│       ├── StackRoute.kt    Wires the view model and the io/ launchers
+│       ├── StackScreen.kt   Empty state, export bar, options sheet, result overlays
+│       ├── StackViewModel.kt Page stack, export options, export state
+│       └── PageGrid.kt      Reorderable thumbnail grid
+├── image/
+│   └── ImageSource.kt       Shared decode engine: EXIF rotation, downsampling
 ├── pdf/
 │   ├── PageLayout.kt        Pure Kotlin. Page geometry in PostScript points.
-│   ├── ImageSource.kt       Decode: EXIF rotation, downsampling
 │   └── PdfExporter.kt       PdfDocument, one page per image
-└── ui/
-    ├── MainViewModel.kt     Page stack, export options, export state
-    ├── MainScreen.kt        Empty state, export bar, options sheet, result overlays
-    ├── PageGrid.kt          Reorderable thumbnail grid
-    └── theme/               Colour scheme and type scale
+└── io/
+    ├── Pickers.kt           rememberImagePicker / rememberPdfCreator wrappers
+    ├── Output.kt            Share intent
+    └── OpenWith.kt          ACTION_VIEW with the no-viewer toast
 ```
 
 ## Data flow
@@ -27,13 +36,13 @@ dev.vighnesh.stackpage
 There is one direction and no repository layer, because there is no persistence.
 
 ```
-Photo Picker ──uris──▶ MainViewModel.addImages
+Photo Picker ──uris──▶ StackViewModel.addImages
                             │
                        UiState.images (List<Uri>, order is page order)
                             │
              ┌──────────────┴──────────────┐
              ▼                             ▼
-        PageGrid                    MainViewModel.export
+        PageGrid                    StackViewModel.export
      (thumbnails, drag)                     │
                                      PdfExporter.export
                                             │
@@ -97,13 +106,13 @@ The whole interaction is a long-press detector, a hit test against `layoutInfo.v
 It is about sixty lines.
 Owning it keeps the drag threshold, the haptic pattern and the swap rule tunable, and avoids taking a dependency whose API churns between majors for something this small.
 
-The move goes through `MainViewModel.move`, so the list stays the single source of truth and the grid animates via `Modifier.animateItem()` rather than by tracking a floating drag offset.
+The move goes through `StackViewModel.move`, so the list stays the single source of truth and the grid animates via `Modifier.animateItem()` rather than by tracking a floating drag offset.
 
 ## Memory budget
 
 The export path is the only place this app can plausibly run out of memory, so the budget is explicit:
 
-- Images are downsampled at decode time via `inSampleSize` so the longest edge is at most `EXPORT_MAX_EDGE` (2400px). That is roughly 300dpi across an A4 short side, past what anyone prints or reads.
+- Images are downsampled at decode time via `inSampleSize` toward `EXPORT_MAX_EDGE` (2400px). Sampling is power-of-two, so the decoded long edge can land anywhere in [2400, 4800); the page layout's destination rect does the final scaling. The instrumented `ImageSourceTest` pins this exact behaviour.
 - Bitmaps decode as `RGB_565`. A printed page has no alpha, and this halves the cost of every decode.
 - Exactly one page bitmap is alive at a time. `PdfExporter` recycles in a `finally` before moving to the next image.
 - `PdfDocument` itself buffers the whole document in memory before `writeTo`. This is the real ceiling on page count and it is not currently bounded. A 100-page export has not been tested. See `docs/ROADMAP.md`.
