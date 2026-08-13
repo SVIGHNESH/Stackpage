@@ -9,6 +9,7 @@ import dev.vighnesh.stackpage.pdf.ExportResult
 import dev.vighnesh.stackpage.pdf.Margin
 import dev.vighnesh.stackpage.pdf.PageOrientation
 import dev.vighnesh.stackpage.pdf.PageSize
+import dev.vighnesh.stackpage.pdf.PageSpec
 import dev.vighnesh.stackpage.pdf.PdfExporter
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,11 +27,11 @@ sealed interface ExportState {
 }
 
 data class UiState(
-    val images: List<Uri> = emptyList(),
+    val pages: List<PageSpec> = emptyList(),
     val options: ExportOptions = ExportOptions(),
     val export: ExportState = ExportState.Idle,
 ) {
-    val isEmpty: Boolean get() = images.isEmpty()
+    val isEmpty: Boolean get() = pages.isEmpty()
 }
 
 class StackViewModel(app: Application) : AndroidViewModel(app) {
@@ -44,26 +45,33 @@ class StackViewModel(app: Application) : AndroidViewModel(app) {
     fun addImages(uris: List<Uri>) {
         if (uris.isEmpty()) return
         _state.update { s ->
-            val existing = s.images.toSet()
-            s.copy(images = s.images + uris.filterNot { it in existing })
+            val existing = s.pages.map { it.uri }.toSet()
+            s.copy(pages = s.pages + uris.filterNot { it in existing }.map { PageSpec(it) })
         }
     }
 
     fun removeImage(uri: Uri) {
-        _state.update { s -> s.copy(images = s.images.filterNot { it == uri }) }
+        _state.update { s -> s.copy(pages = s.pages.filterNot { it.uri == uri }) }
+    }
+
+    /** Quarter clockwise turn each tap; the export applies it for real. */
+    fun rotatePage(uri: Uri) {
+        _state.update { s ->
+            s.copy(pages = s.pages.map { if (it.uri == uri) it.rotatedClockwise() else it })
+        }
     }
 
     fun clearAll() {
-        _state.update { it.copy(images = emptyList()) }
+        _state.update { it.copy(pages = emptyList()) }
     }
 
     /** Moves the page at [from] to index [to], keeping every other page's order. */
     fun move(from: Int, to: Int) {
         _state.update { s ->
-            if (from !in s.images.indices || to !in s.images.indices || from == to) return@update s
-            val next = s.images.toMutableList()
+            if (from !in s.pages.indices || to !in s.pages.indices || from == to) return@update s
+            val next = s.pages.toMutableList()
             next.add(to, next.removeAt(from))
-            s.copy(images = next)
+            s.copy(pages = next)
         }
     }
 
@@ -78,21 +86,21 @@ class StackViewModel(app: Application) : AndroidViewModel(app) {
 
     /** Default filename offered to the system file picker. */
     fun suggestedFileName(): String {
-        val count = _state.value.images.size
+        val count = _state.value.pages.size
         return if (count == 1) "Stackpage.pdf" else "Stackpage-$count-pages.pdf"
     }
 
     fun export(target: Uri) {
         val current = _state.value
-        if (current.images.isEmpty()) return
+        if (current.pages.isEmpty()) return
 
         exportJob?.cancel()
-        _state.update { it.copy(export = ExportState.Running(0, current.images.size)) }
+        _state.update { it.copy(export = ExportState.Running(0, current.pages.size)) }
 
         exportJob = viewModelScope.launch {
             val result = PdfExporter.export(
                 context = getApplication(),
-                images = current.images,
+                pages = current.pages,
                 target = target,
                 options = current.options,
                 onProgress = { done, total ->

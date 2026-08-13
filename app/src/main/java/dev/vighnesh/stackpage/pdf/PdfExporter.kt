@@ -37,12 +37,12 @@ object PdfExporter {
      */
     suspend fun export(
         context: Context,
-        images: List<Uri>,
+        pages: List<PageSpec>,
         target: Uri,
         options: ExportOptions,
         onProgress: (done: Int, total: Int) -> Unit = { _, _ -> },
     ): ExportResult = withContext(Dispatchers.IO) {
-        if (images.isEmpty()) return@withContext ExportResult.Failure("No images selected.")
+        if (pages.isEmpty()) return@withContext ExportResult.Failure("No images selected.")
 
         val document = PdfDocument()
         // Filtering matters: pages are downscales of the source, and without it
@@ -51,13 +51,16 @@ object PdfExporter {
         var written = 0
 
         try {
-            images.forEachIndexed { index, uri ->
+            pages.forEachIndexed { index, spec ->
                 coroutineContext.ensureActive()
 
-                val bitmap = ImageSource.decode(context, uri)
+                val decoded = ImageSource.decode(context, spec.uri)
                     ?: return@withContext ExportResult.Failure(
-                        "Could not read image ${index + 1} of ${images.size}.",
+                        "Could not read image ${index + 1} of ${pages.size}.",
                     )
+                // Crop and rotation happen between decode and layout, so the
+                // page geometry only ever sees the final image shape.
+                val bitmap = decoded.applySpec(spec)
 
                 try {
                     val layout = layoutPage(
@@ -94,7 +97,7 @@ object PdfExporter {
                 }
 
                 written = index + 1
-                onProgress(written, images.size)
+                onProgress(written, pages.size)
             }
 
             context.contentResolver.openOutputStream(target)?.use { out ->

@@ -72,6 +72,7 @@ fun StackScreen(
     onPickImages: () -> Unit,
     onMove: (Int, Int) -> Unit,
     onRemove: (Uri) -> Unit,
+    onRotate: (Uri) -> Unit,
     onClearAll: () -> Unit,
     onPageSize: (PageSize) -> Unit,
     onOrientation: (PageOrientation) -> Unit,
@@ -104,7 +105,7 @@ fun StackScreen(
         bottomBar = {
             if (!state.isEmpty) {
                 ExportBar(
-                    pageCount = state.images.size,
+                    pageCount = state.pages.size,
                     options = state.options,
                     onOpenOptions = { showOptions = true },
                     onExport = onExport,
@@ -117,9 +118,10 @@ fun StackScreen(
                 EmptyState(onPickImages = onPickImages, modifier = Modifier.padding(padding))
             } else {
                 PageGrid(
-                    images = state.images,
+                    pages = state.pages,
                     onMove = onMove,
                     onRemove = onRemove,
+                    onRotate = onRotate,
                     // The grid scrolls under the bars, so the padding goes on the
                     // content rather than the container.
                     contentPadding = PaddingValues(

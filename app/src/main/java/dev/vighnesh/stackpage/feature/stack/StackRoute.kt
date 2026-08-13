@@ -35,6 +35,7 @@ fun StackRoute() {
         onPickImages = pickImages,
         onMove = vm::move,
         onRemove = vm::removeImage,
+        onRotate = vm::rotatePage,
         onClearAll = vm::clearAll,
         onPageSize = vm::setPageSize,
         onOrientation = vm::setOrientation,

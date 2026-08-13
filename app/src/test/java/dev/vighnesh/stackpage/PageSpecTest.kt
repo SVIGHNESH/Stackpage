@@ -1,0 +1,66 @@
+package dev.vighnesh.stackpage
+
+import dev.vighnesh.stackpage.pdf.CropRect
+import dev.vighnesh.stackpage.pdf.cropPixels
+import dev.vighnesh.stackpage.pdf.normalizeRotation
+import dev.vighnesh.stackpage.pdf.transformedSize
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+
+/** The transform contract: crop in source space first, then rotate. */
+class PageSpecTest {
+
+    @Test
+    fun rotationNormalises() {
+        assertEquals(0, normalizeRotation(0))
+        assertEquals(90, normalizeRotation(90))
+        assertEquals(270, normalizeRotation(-90))
+        assertEquals(0, normalizeRotation(360))
+        assertEquals(180, normalizeRotation(540))
+        assertFailsWith<IllegalArgumentException> { normalizeRotation(45) }
+    }
+
+    @Test
+    fun quarterTurnSwapsDimensions() {
+        assertEquals(800 to 600, transformedSize(600, 800, 90, null))
+        assertEquals(800 to 600, transformedSize(600, 800, 270, null))
+        assertEquals(600 to 800, transformedSize(600, 800, 180, null))
+        assertEquals(600 to 800, transformedSize(600, 800, 0, null))
+    }
+
+    @Test
+    fun cropFractionsMapToPixels() {
+        val p = cropPixels(1000, 500, CropRect(0.1f, 0.2f, 0.9f, 0.8f))
+        assertEquals(100, p.x)
+        assertEquals(100, p.y)
+        assertEquals(800, p.width)
+        assertEquals(300, p.height)
+    }
+
+    @Test
+    fun cropAppliesBeforeRotation() {
+        // A 1000x500 source cropped to its left half is 500x500; rotating a
+        // square changes nothing. Rotating first then cropping would give a
+        // 250x500 result, which is the bug this test exists to catch.
+        assertEquals(500 to 500, transformedSize(1000, 500, 90, CropRect(0f, 0f, 0.5f, 1f)))
+        // A non-square crop then a quarter turn swaps the cropped dims.
+        assertEquals(300 to 800, transformedSize(1000, 500, 90, CropRect(0.1f, 0.2f, 0.9f, 0.8f)))
+    }
+
+    @Test
+    fun cropNeverEscapesTheSource() {
+        val p = cropPixels(3, 3, CropRect(0.9f, 0.9f, 1f, 1f))
+        assertEquals(2, p.x)
+        assertEquals(1, p.width)
+        assertEquals(1, p.height)
+    }
+
+    @Test
+    fun invalidCropsThrow() {
+        assertFailsWith<IllegalArgumentException> { CropRect(0.5f, 0f, 0.5f, 1f) }
+        assertFailsWith<IllegalArgumentException> { CropRect(-0.1f, 0f, 1f, 1f) }
+        assertFailsWith<IllegalArgumentException> { CropRect(0f, 0.8f, 1f, 0.2f) }
+        assertFailsWith<IllegalArgumentException> { cropPixels(0, 10, CropRect(0f, 0f, 1f, 1f)) }
+    }
+}

@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.RotateRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -44,6 +45,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import android.net.Uri
 import coil3.compose.AsyncImage
+import dev.vighnesh.stackpage.pdf.PageSpec
 
 /**
  * The page stack: a reorderable grid of thumbnails, one per PDF page.
@@ -55,9 +57,10 @@ import coil3.compose.AsyncImage
  */
 @Composable
 fun PageGrid(
-    images: List<Uri>,
+    pages: List<PageSpec>,
     onMove: (from: Int, to: Int) -> Unit,
     onRemove: (Uri) -> Unit,
+    onRotate: (Uri) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
     state: LazyGridState = rememberLazyGridState(),
@@ -80,7 +83,7 @@ fun PageGrid(
         verticalArrangement = Arrangement.spacedBy(12.dp),
         modifier = modifier
             .fillMaxSize()
-            .pointerInput(images.size) {
+            .pointerInput(pages.size) {
                 detectDragGesturesAfterLongPress(
                     onDragStart = { offset ->
                         indexAt(offset)?.let {
@@ -105,13 +108,14 @@ fun PageGrid(
                 )
             },
     ) {
-        items(images, key = { it.toString() }) { uri ->
-            val index = images.indexOf(uri)
+        items(pages, key = { it.uri.toString() }) { page ->
+            val index = pages.indexOfFirst { it.uri == page.uri }
             PageThumbnail(
-                uri = uri,
+                page = page,
                 pageNumber = index + 1,
                 isDragging = draggingIndex == index,
-                onRemove = { onRemove(uri) },
+                onRemove = { onRemove(page.uri) },
+                onRotate = { onRotate(page.uri) },
                 modifier = Modifier.animateItem(),
             )
         }
@@ -120,10 +124,11 @@ fun PageGrid(
 
 @Composable
 private fun PageThumbnail(
-    uri: Uri,
+    page: PageSpec,
     pageNumber: Int,
     isDragging: Boolean,
     onRemove: () -> Unit,
+    onRotate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     // A small lift rather than a jump: the card should read as picked up, not
@@ -143,11 +148,15 @@ private fun PageThumbnail(
             .background(MaterialTheme.colorScheme.surfaceContainerHigh)
             .semantics { contentDescription = "Page $pageNumber. Long press to reorder." },
     ) {
+        // The thumbnail previews the rotation; the export applies it to the
+        // pixels. Crop preview waits for the editor.
         AsyncImage(
-            model = uri,
+            model = page.uri,
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .graphicsLayer { rotationZ = page.rotationDegrees.toFloat() },
         )
 
         // Page number, bottom-left, on its own scrim so it stays legible over
@@ -178,6 +187,25 @@ private fun PageThumbnail(
                 Icon(
                     Icons.Rounded.Close,
                     contentDescription = "Remove page $pageNumber",
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(4.dp).size(16.dp),
+                )
+            }
+        }
+
+        IconButton(
+            onClick = onRotate,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .size(40.dp),
+        ) {
+            Surface(
+                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.92f),
+                shape = RoundedCornerShape(percent = 50),
+            ) {
+                Icon(
+                    Icons.Rounded.RotateRight,
+                    contentDescription = "Rotate page $pageNumber",
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(4.dp).size(16.dp),
                 )
