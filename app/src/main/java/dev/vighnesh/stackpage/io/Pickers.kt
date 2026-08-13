@@ -50,6 +50,15 @@ fun rememberImagePicker(onPicked: (List<Uri>) -> Unit): () -> Unit {
     }
 }
 
+/** Returns a launch function for picking an output folder via SAF. */
+@Composable
+fun rememberDirectoryPicker(onPicked: (Uri) -> Unit): () -> Unit {
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocumentTree(),
+    ) { tree -> tree?.let(onPicked) }
+    return { launcher.launch(null) }
+}
+
 /** Returns a launch function taking the suggested file name for a new PDF. */
 @Composable
 fun rememberPdfCreator(onCreated: (Uri) -> Unit): (String) -> Unit {

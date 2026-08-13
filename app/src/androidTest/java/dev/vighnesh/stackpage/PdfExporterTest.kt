@@ -16,7 +16,7 @@ import java.io.File
 class PdfExporterTest {
 
     @Test
-    fun exportsTwoImagesToATwoPagePdf() = runBlocking {
+    fun exportsTwoImagesToATwoPagePdf(): Unit = runBlocking {
         val context = Fixtures.targetContext
         val images = listOf(
             Fixtures.uriFor("plain-900x1200.jpg"),

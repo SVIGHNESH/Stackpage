@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import dev.vighnesh.stackpage.feature.compress.CompressRoute
 import dev.vighnesh.stackpage.feature.stack.StackRoute
 import dev.vighnesh.stackpage.ui.home.HomeScreen
 import dev.vighnesh.stackpage.ui.theme.StackpageTheme
@@ -32,6 +33,7 @@ class MainActivity : ComponentActivity() {
 object Routes {
     const val HOME = "home"
     const val STACK = "stack"
+    const val COMPRESS = "compress"
 }
 
 @Composable
@@ -39,10 +41,16 @@ private fun StackpageNavHost() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Routes.HOME) {
         composable(Routes.HOME) {
-            HomeScreen(onOpenStack = { navController.navigate(Routes.STACK) })
+            HomeScreen(
+                onOpenStack = { navController.navigate(Routes.STACK) },
+                onOpenCompress = { navController.navigate(Routes.COMPRESS) },
+            )
         }
         composable(Routes.STACK) {
             StackRoute()
+        }
+        composable(Routes.COMPRESS) {
+            CompressRoute()
         }
     }
 }

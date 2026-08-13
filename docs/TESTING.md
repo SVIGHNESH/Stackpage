@@ -43,9 +43,10 @@ This is the suite that would have caught the shipped decode regression in second
 One finding pinned by the suite rather than fixed: `inSampleSize` is power-of-two, so the decoded long edge lands in [`EXPORT_MAX_EDGE`, 2x`EXPORT_MAX_EDGE`), not at the bound itself.
 The page layout's destination rect does the final scaling, so this costs memory headroom, not correctness.
 
-**Status: written and compiling; the device run is pending.**
-The SM-T225 dropped off adb during the first attempted run and has not reconnected.
-Run the command above and update this line when it passes.
+**Status: passing.**
+All six ran green on the SM-T225 (Android 14) on 2026-08-14, `OK (6 tests)` in 1.2s.
+The decode regression class moves from "no coverage" to "covered".
+Note for flaky USB: if the Gradle connected task reports "No connected devices" or a streamed install fails with an empty error, push both APKs to `/data/local/tmp` and use `pm install -r` plus `am instrument -w dev.vighnesh.stackpage.test/androidx.test.runner.AndroidJUnitRunner` instead.
 
 ## What has no automated coverage
 
@@ -90,6 +91,10 @@ Status as of the last hardware run on a Galaxy Tab A7 Lite (SM-T225, Android 12,
 | Back button dismisses each overlay | Not run | Implemented, unverified |
 | Dynamic type at largest size | Not run | |
 | Talkback labels | Not run | Content descriptions are written but unheard |
+| Compress: 4MB photo to 200 KB within 10% | Not run | M2 gate |
+| Compress: screenshot PNG converts and hits target | Not run | M2 gate |
+| Compress: batch of 6 saves into the chosen folder | Not run | M2 gate |
+| Compress: unreachable target says "best possible" | Not run | |
 
 ## Known issues
 

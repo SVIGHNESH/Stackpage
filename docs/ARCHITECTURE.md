@@ -15,19 +15,25 @@ dev.vighnesh.stackpage
 │   ├── home/HomeScreen.kt   Tool launcher: sections of cards, not an icon grid
 │   └── theme/               Colour scheme and type scale
 ├── feature/
-│   └── stack/               The PDF flow
-│       ├── StackRoute.kt    Wires the view model and the io/ launchers
-│       ├── StackScreen.kt   Empty state, export bar, options sheet, result overlays
-│       ├── StackViewModel.kt Page stack, export options, export state
-│       └── PageGrid.kt      Reorderable thumbnail grid
+│   ├── stack/               The PDF flow
+│   │   ├── StackRoute.kt    Wires the view model and the io/ launchers
+│   │   ├── StackScreen.kt   Empty state, export bar, options sheet, result overlays
+│   │   ├── StackViewModel.kt Page stack, export options, export state
+│   │   └── PageGrid.kt      Reorderable thumbnail grid
+│   └── compress/            Compress-to-target-size
+│       ├── CompressRoute.kt
+│       ├── CompressScreen.kt Target chips, item list, save bar
+│       └── CompressViewModel.kt Batch state, estimate, save-all into a SAF tree
 ├── image/
-│   └── ImageSource.kt       Shared decode engine: EXIF rotation, downsampling
+│   ├── ImageSource.kt       Shared decode engine: EXIF rotation, downsampling
+│   ├── TargetSizeSearch.kt  Pure Kotlin. Quality/scale search over an injected probe.
+│   └── Encoder.kt           Bitmap to JPEG/WebP bytes; counting-stream probe
 ├── pdf/
 │   ├── PageLayout.kt        Pure Kotlin. Page geometry in PostScript points.
 │   └── PdfExporter.kt       PdfDocument, one page per image
 └── io/
-    ├── Pickers.kt           rememberImagePicker / rememberPdfCreator wrappers
-    ├── Output.kt            Share intent
+    ├── Pickers.kt           rememberImagePicker / rememberPdfCreator / rememberDirectoryPicker
+    ├── Output.kt            Share intent, mime and name mapping, SAF-tree file creation
     └── OpenWith.kt          ACTION_VIEW with the no-viewer toast
 ```
 

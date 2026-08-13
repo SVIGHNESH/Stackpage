@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowForward
+import androidx.compose.material.icons.rounded.Compress
 import androidx.compose.material.icons.rounded.PictureAsPdf
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -32,7 +33,10 @@ import androidx.compose.ui.unit.dp
  * stays in plain words at the bottom where a settings link would normally sit.
  */
 @Composable
-fun HomeScreen(onOpenStack: () -> Unit) {
+fun HomeScreen(
+    onOpenStack: () -> Unit,
+    onOpenCompress: () -> Unit,
+) {
     Scaffold { padding ->
         // No verticalScroll here: weight() needs a bounded height to pin the
         // footer, and one card does not need to scroll. Revisit when the card
@@ -68,6 +72,13 @@ fun HomeScreen(onOpenStack: () -> Unit) {
                 title = "Make a PDF",
                 description = "Stack images into one document, in the order you choose.",
                 onClick = onOpenStack,
+            )
+            Spacer(Modifier.height(12.dp))
+            ToolCard(
+                icon = Icons.Rounded.Compress,
+                title = "Compress to a size",
+                description = "Shrink images until they fit a target like 200 KB.",
+                onClick = onOpenCompress,
             )
 
             Spacer(Modifier.weight(1f))
