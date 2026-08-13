@@ -99,6 +99,9 @@ Status as of the last hardware run on a Galaxy Tab A7 Lite (SM-T225, Android 12,
 | Convert: each format round-trips on device | Not run | M4 gate |
 | Convert: HEIC from the camera converts | Not run | M4 gate |
 | Convert: preset resize fits the box, no upscale | Not run | M4 gate; fitWithin is JVM-tested |
+| Scan: paper to legible A4 under 500 KB with B&W filter | Not run | M3 gate |
+| Scan: works offline with the stripped manifest | Not run | M3 gate; the deferred spike, see decision 14 |
+| Rotate from the grid lands rotated in the export | Not run | M3 gate; check /MediaBox and by eye |
 | Process death behind the picker restores the route | Not run | See known issue 1a |
 | Save-all batch duration is tolerable | Not run | searchPlan re-probes per image; seed from the previous winner if slow |
 

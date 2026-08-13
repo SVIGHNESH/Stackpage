@@ -24,10 +24,12 @@ dev.vighnesh.stackpage
 │   │   ├── CompressRoute.kt
 │   │   ├── CompressScreen.kt Target chips, item list, save bar
 │   │   └── CompressViewModel.kt Batch state, estimate, save-all into a SAF tree
-│   └── convert/             Format conversion and preset resize
-│       ├── ConvertRoute.kt
-│       ├── ConvertScreen.kt  Format chips, size-preset chips, item list
-│       └── ConvertViewModel.kt JPG/PNG/WebP out, fit-within resize, SAF tree
+│   ├── convert/             Format conversion and preset resize
+│   │   ├── ConvertRoute.kt
+│   │   ├── ConvertScreen.kt  Format chips, size-preset chips, item list
+│   │   └── ConvertViewModel.kt JPG/PNG/WebP out, fit-within resize, SAF tree
+│   └── scan/
+│       └── ScanRoute.kt     Launches the ML Kit scanner, pages join the stack
 ├── image/
 │   ├── ImageSource.kt       Shared decode engine: EXIF rotation, downsampling
 │   ├── TargetSizeSearch.kt  Pure Kotlin. Quality/scale search over an injected probe.
@@ -35,7 +37,9 @@ dev.vighnesh.stackpage
 │   └── Encoder.kt           Bitmap to JPEG/WebP bytes; counting-stream probe
 ├── pdf/
 │   ├── PageLayout.kt        Pure Kotlin. Page geometry in PostScript points.
-│   └── PdfExporter.kt       PdfDocument, one page per image
+│   ├── PageTransform.kt     Pure Kotlin. Crop-then-rotate arithmetic.
+│   ├── PageSpec.kt          A page: uri + rotation + optional crop
+│   └── PdfExporter.kt       PdfDocument, one page per PageSpec
 └── io/
     ├── Pickers.kt           rememberImagePicker / rememberPdfCreator / rememberDirectoryPicker
     ├── Output.kt            Share intent, mime and name mapping, SAF-tree file creation

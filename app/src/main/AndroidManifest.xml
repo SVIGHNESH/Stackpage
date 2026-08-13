@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!--
       No permissions. The Photo Picker returns URIs the user chose, and the
@@ -8,7 +9,21 @@
       than the product needs, and there is no network permission at all, which
       is what makes the "nothing leaves this device" claim structural rather
       than a promise.
+
+      The removals below are that claim enforced against dependencies: the
+      ML Kit document scanner library merges INTERNET and ACCESS_NETWORK_STATE
+      into consumers, but the scanner itself runs in Play services' own
+      process with its own permissions. Stripping them here keeps this APK at
+      zero permissions; aapt dump permissions is the check, and a merge that
+      reintroduces anything fails loudly in review, not silently. See
+      docs/DECISIONS.md decision 14.
     -->
+    <uses-permission
+        android:name="android.permission.INTERNET"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.ACCESS_NETWORK_STATE"
+        tools:node="remove" />
 
     <application
         android:allowBackup="true"

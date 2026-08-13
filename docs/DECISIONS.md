@@ -153,3 +153,20 @@ That tap is accepted as the price of every future tool having a front door, inst
 
 **Rejected:** keeping `stack` as the start destination until a second tool exists, which would make the framework refactor invisible and unexercised.
 **Revisit if:** usage shows the PDF flow is still effectively the only tool after the roadmap's first wave lands.
+
+---
+
+## 14. Scan uses the ML Kit document scanner, with network permissions stripped
+
+Scan mode ships on `play-services-mlkit-document-scanner`.
+The scanner is a Play-services-hosted activity that owns its camera session, corner detection, crop UI, and filters, which is the whole M3 surface without this app holding CAMERA.
+
+The library's manifest merges `INTERNET` and `ACCESS_NETWORK_STATE` into consumers, which would silently break the zero-permission claim.
+Both are stripped with `tools:node="remove"`, and `aapt dump permissions` on the built APK is the check: it must list nothing beyond the app's own auto-generated `DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`.
+Model delivery and any network the scanner needs happen in Play services' own process under its own permissions; the honest phrasing of the claim is "no network *by this app*".
+
+The plan's hardware spike is still owed and was deferred at the owner's instruction: verify on the SM-T225 that scanning works with the stripped manifest and needs no network at scan time.
+If the scanner fails under the stripped manifest, the fallback stands: CameraX capture plus our own perspective crop, with CAMERA added as a deliberate, documented change.
+
+**Rejected:** CameraX-first (owns a camera session and the permission for a job the platform already hosts); shipping the merged INTERNET permission (breaks the only claim).
+**Revisit if:** the deferred spike fails on hardware, or Play services delivery proves unreliable on de-Googled devices people actually use.

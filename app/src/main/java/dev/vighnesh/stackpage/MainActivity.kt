@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dev.vighnesh.stackpage.feature.compress.CompressRoute
 import dev.vighnesh.stackpage.feature.convert.ConvertRoute
+import dev.vighnesh.stackpage.feature.scan.ScanRoute
 import dev.vighnesh.stackpage.feature.stack.StackRoute
 import dev.vighnesh.stackpage.ui.home.HomeScreen
 import dev.vighnesh.stackpage.ui.theme.StackpageTheme
@@ -36,6 +37,7 @@ object Routes {
     const val STACK = "stack"
     const val COMPRESS = "compress"
     const val CONVERT = "convert"
+    const val SCAN = "scan"
 }
 
 @Composable
@@ -44,6 +46,7 @@ private fun StackpageNavHost() {
     NavHost(navController = navController, startDestination = Routes.HOME) {
         composable(Routes.HOME) {
             HomeScreen(
+                onOpenScan = { navController.navigate(Routes.SCAN) },
                 onOpenStack = { navController.navigate(Routes.STACK) },
                 onOpenCompress = { navController.navigate(Routes.COMPRESS) },
                 onOpenConvert = { navController.navigate(Routes.CONVERT) },
@@ -57,6 +60,18 @@ private fun StackpageNavHost() {
         }
         composable(Routes.CONVERT) {
             ConvertRoute()
+        }
+        composable(Routes.SCAN) {
+            ScanRoute(
+                onScanned = {
+                    // Scanned pages land in the stack tool; scan drops out of
+                    // the back stack so back from the stack returns home.
+                    navController.navigate(Routes.STACK) {
+                        popUpTo(Routes.HOME)
+                    }
+                },
+                onCancelled = { navController.popBackStack() },
+            )
         }
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.Compress
+import androidx.compose.material.icons.rounded.DocumentScanner
 import androidx.compose.material.icons.rounded.PictureAsPdf
 import androidx.compose.material.icons.rounded.SwapHoriz
 import androidx.compose.material3.Icon
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.dp
  */
 @Composable
 fun HomeScreen(
+    onOpenScan: () -> Unit,
     onOpenStack: () -> Unit,
     onOpenCompress: () -> Unit,
     onOpenConvert: () -> Unit,
@@ -67,6 +69,13 @@ fun HomeScreen(
                 "TOOLS",
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(Modifier.height(12.dp))
+            ToolCard(
+                icon = Icons.Rounded.DocumentScanner,
+                title = "Scan to PDF",
+                description = "Point the camera at paper; corners and contrast are handled for you.",
+                onClick = onOpenScan,
             )
             Spacer(Modifier.height(12.dp))
             ToolCard(
