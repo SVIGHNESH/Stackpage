@@ -1,5 +1,6 @@
 package dev.vighnesh.stackpage.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,6 +51,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -357,7 +359,7 @@ private fun <T> ChipRow(
 
 @Composable
 private fun ExportProgress(state: ExportState.Running, onCancel: () -> Unit) {
-    Scrim {
+    Scrim(onDismiss = onCancel) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(28.dp),
@@ -387,7 +389,7 @@ private fun ExportSuccess(
     onOpen: (Uri) -> Unit,
     onShare: (Uri) -> Unit,
 ) {
-    Scrim {
+    Scrim(onDismiss = onDismiss) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(28.dp),
@@ -424,7 +426,7 @@ private fun ExportSuccess(
 
 @Composable
 private fun ExportFailure(message: String, onDismiss: () -> Unit) {
-    Scrim {
+    Scrim(onDismiss = onDismiss) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(28.dp),
@@ -447,13 +449,22 @@ private fun ExportFailure(message: String, onDismiss: () -> Unit) {
     }
 }
 
-/** Blocking overlay with a card, used for the three export states. */
+/**
+ * Blocking overlay with a card, used for the three export states.
+ *
+ * A coloured surface alone does not block input in Compose - only nodes with a
+ * pointer-input modifier take part in hit testing - so without the empty
+ * [pointerInput] below, "Export PDF" stays tappable underneath and relaunches
+ * the file picker mid-export. [onDismiss] also handles system back, so the
+ * overlay is never a dead end.
+ */
 @Composable
-private fun Scrim(content: @Composable () -> Unit) {
+private fun Scrim(onDismiss: () -> Unit, content: @Composable () -> Unit) {
+    BackHandler(onBack = onDismiss)
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .then(Modifier),
+            .pointerInput(Unit) { awaitPointerEventScope { while (true) awaitPointerEvent() } },
         contentAlignment = Alignment.Center,
     ) {
         Surface(color = MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f), modifier = Modifier.fillMaxSize()) {}
