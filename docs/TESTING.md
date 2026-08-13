@@ -95,6 +95,10 @@ Status as of the last hardware run on a Galaxy Tab A7 Lite (SM-T225, Android 12,
 | Compress: screenshot PNG converts and hits target | Not run | M2 gate |
 | Compress: batch of 6 saves into the chosen folder | Not run | M2 gate |
 | Compress: unreachable target says "best possible" | Not run | |
+| Compress: single real photo, custom 20 KB target | Pass | 292 KB → 16 KB, saved via SAF tree, "All saved" shown |
+| Convert: each format round-trips on device | Not run | M4 gate |
+| Convert: HEIC from the camera converts | Not run | M4 gate |
+| Convert: preset resize fits the box, no upscale | Not run | M4 gate; fitWithin is JVM-tested |
 | Process death behind the picker restores the route | Not run | See known issue 1a |
 | Save-all batch duration is tolerable | Not run | searchPlan re-probes per image; seed from the previous winner if slow |
 

@@ -20,13 +20,18 @@ dev.vighnesh.stackpage
 │   │   ├── StackScreen.kt   Empty state, export bar, options sheet, result overlays
 │   │   ├── StackViewModel.kt Page stack, export options, export state
 │   │   └── PageGrid.kt      Reorderable thumbnail grid
-│   └── compress/            Compress-to-target-size
-│       ├── CompressRoute.kt
-│       ├── CompressScreen.kt Target chips, item list, save bar
-│       └── CompressViewModel.kt Batch state, estimate, save-all into a SAF tree
+│   ├── compress/            Compress-to-target-size
+│   │   ├── CompressRoute.kt
+│   │   ├── CompressScreen.kt Target chips, item list, save bar
+│   │   └── CompressViewModel.kt Batch state, estimate, save-all into a SAF tree
+│   └── convert/             Format conversion and preset resize
+│       ├── ConvertRoute.kt
+│       ├── ConvertScreen.kt  Format chips, size-preset chips, item list
+│       └── ConvertViewModel.kt JPG/PNG/WebP out, fit-within resize, SAF tree
 ├── image/
 │   ├── ImageSource.kt       Shared decode engine: EXIF rotation, downsampling
 │   ├── TargetSizeSearch.kt  Pure Kotlin. Quality/scale search over an injected probe.
+│   ├── Presets.kt           Pure Kotlin. Size presets and fit-within arithmetic.
 │   └── Encoder.kt           Bitmap to JPEG/WebP bytes; counting-stream probe
 ├── pdf/
 │   ├── PageLayout.kt        Pure Kotlin. Page geometry in PostScript points.

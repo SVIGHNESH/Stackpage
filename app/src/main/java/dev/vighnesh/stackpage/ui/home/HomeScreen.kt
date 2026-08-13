@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.Compress
 import androidx.compose.material.icons.rounded.PictureAsPdf
+import androidx.compose.material.icons.rounded.SwapHoriz
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -36,6 +37,7 @@ import androidx.compose.ui.unit.dp
 fun HomeScreen(
     onOpenStack: () -> Unit,
     onOpenCompress: () -> Unit,
+    onOpenConvert: () -> Unit,
 ) {
     Scaffold { padding ->
         // No verticalScroll here: weight() needs a bounded height to pin the
@@ -79,6 +81,13 @@ fun HomeScreen(
                 title = "Compress to a size",
                 description = "Shrink images until they fit a target like 200 KB.",
                 onClick = onOpenCompress,
+            )
+            Spacer(Modifier.height(12.dp))
+            ToolCard(
+                icon = Icons.Rounded.SwapHoriz,
+                title = "Convert and resize",
+                description = "Change to JPG, PNG, or WebP, with passport and social size presets.",
+                onClick = onOpenConvert,
             )
 
             Spacer(Modifier.weight(1f))
